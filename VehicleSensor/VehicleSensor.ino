@@ -10,8 +10,9 @@ int GREEN = D5;
 int YELLOW = D7;
 int RED = D6;
 
-// #### MQTT SERVER - Raspberry Pi Broker #### //
-char mqtt_server = 192.168.230.116  
+// #### MQTT Server connection Setup - Raspberry Pi Broker #### //
+int mqtt_server = 192.168.230.116;
+int mqtt_port = 1883;  
 
 // ##### Wifi Connection Setup #### //
 char WifiName[] = "Verizon-SM-G935V";            //SSID
@@ -94,6 +95,7 @@ void setup() {
   pinMode(YELLOW,OUTPUT);
   pinMode(RED,OUTPUT);
   Serial.begin(115200);                          //Starts the Serial Monitor (Input printed on screen)
+  client.setServer(mqtt_server, mqtt_port);           
 
   WiFi.begin(WifiName,Password);
   while (WiFi.status() !=WL_CONNECTED){          //If not connected to Wifi, delay until connected
