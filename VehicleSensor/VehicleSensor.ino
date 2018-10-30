@@ -1,13 +1,17 @@
+#include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <WiFiClient.h>
-//#include <avr/wdt.h> Watchdog timer library
+
 
 // #### LED Pin Setup #### //
 int GREEN = D5; 
 int YELLOW = D7;
 int RED = D6;
+
+// #### MQTT SERVER - Raspberry Pi Broker #### //
+char mqtt_server = 192.168.230.116  
 
 // ##### Wifi Connection Setup #### //
 char WifiName[] = "Verizon-SM-G935V";            //SSID
