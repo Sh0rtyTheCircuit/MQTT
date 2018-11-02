@@ -14,7 +14,7 @@ char* LED_pwr = "On";
 char* LED_color = "Green";
 
 // #### MQTT Server connection Setup - Raspberry Pi Broker #### //
-char* mqtt_server = "192.168.230.116";  
+char* mqtt_server = "192.168.43.40";  
 int mqtt_port = 1883;  
 
 WiFiClient Wifi;            //Setup Wifi object 

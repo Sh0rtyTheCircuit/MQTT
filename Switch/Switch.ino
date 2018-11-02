@@ -6,7 +6,7 @@ int Switch = D7;
 int State = 0;       
 
 // #### MQTT Server connection Setup - Raspberry Pi Broker #### //
-char* mqtt_server = "192.168.230.116";  
+char* mqtt_server = "192.168.43.40";  
 int mqtt_port = 1883;
 char* topic = "Distance Sensor and Reed Switch";  
 
@@ -52,10 +52,10 @@ void loop() {
   client.loop();
   State = digitalRead(Switch);
   if (State == 1){
-    client.publish(topic,"1");
+    client.publish(topic,"on");
   }
   else if (State == 0){
-    client.publish(topic, "0");
+    client.publish(topic,"off");
   }
   Serial.print(topic);
   Serial.print(" ");

@@ -12,7 +12,7 @@ int distance;      //1 bit integer
 
 
 // #### MQTT Server connection Setup - Raspberry Pi Broker #### //
-char* mqtt_server = "192.168.230.116";  
+char* mqtt_server = "192.168.43.40";  
 int mqtt_port = 1883;  
 char* topic = "Distance Sensor and Reed Switch";
 
@@ -75,14 +75,17 @@ void loop() {
     if (distance > 10){
       Serial.println("Green - Too far");
       client.publish(topic,"green");  //Server is 192.168.43.177. Setup GET request to send to this
+      delay (100);
     }
     else if (distance < 10 && distance > 5){
       Serial.println("Yellow - Getting Close");
       client.publish(topic,"yellow");
+      delay (100);
     }
     else if (distance == 5) {
       Serial.println ("Red - Perfect");
       client.publish(topic,"red");
+      delay (100);
     }
     else if (distance < 5){
       Serial.println ("Flash Green and Yellow - Too close");
