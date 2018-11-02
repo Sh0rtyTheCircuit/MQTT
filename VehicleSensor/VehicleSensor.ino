@@ -11,12 +11,11 @@ int YELLOW = D7;
 int RED = D6;
 
 // ### Sensor Variables sent ### //
-String LED_pwr = "On";
-String LED_color = "Green";
-String LED_final = "Yellow";
+char* LED_pwr = "On";
+char* LED_color = "Green";
 
 // #### MQTT Server connection Setup - Raspberry Pi Broker #### //
-int mqtt_server = "192.168.230.116";
+char* mqtt_server = "192.168.230.116";  
 int mqtt_port = 1883;  
 
 WiFiClient Wifi;            //Setup Wifi object 
@@ -28,13 +27,9 @@ char Password[] = "password";
 
 // #### LED Functions Setup #### //
 void TurnGREEN(){
-  //TurnOFF();
   AllClear();
   digitalWrite(GREEN,HIGH);
-  //digitalWrite(YELLOW,LOW);
-  //digitalWrite(RED,LOW);
   Serial.println("GREEN");
-  
 }
 
 void Flash(){
@@ -71,6 +66,8 @@ void AllClear(){
   digitalWrite(RED,LOW);
 }
 
+// ### Look through payload (Message Sent) for LED instructions ### //
+
 void Msg_rcv(char* topic, byte* payload, unsigned int length){     //Unsigned int = Positive numbers (more range)
   if ((char) payload[0] == 'o'){
     if ((char) payload[1] == 'n'){
@@ -91,14 +88,24 @@ void Msg_rcv(char* topic, byte* payload, unsigned int length){     //Unsigned in
   }
 }
 
+// ### Call the functions according to the payload and LED power being on or off ### //
+
 void Turn_color(){
-  if (LED_pwr = "On"){
-    LED_final = LED_color;
+  if (LED_pwr == "On"){
+    if (LED_color == "Green"){
+      TurnGREEN();
+    }
+    else if (LED_color == "Red"){
+      TurnRED();
+    }
+    else if (LED_color == "Yellow"){
+      TurnYELLOW();
+    }
     Serial.print (LED_color);
     Serial.println (" is on");
     }
    else{
-    LED_final = "None";
+    AllClear();
     Serial.println ("Power is off");  
    }
 }
@@ -109,8 +116,10 @@ void setup() {
   pinMode(YELLOW,OUTPUT);
   pinMode(RED,OUTPUT);
   Serial.begin(115200);                          //Starts the Serial Monitor (Input printed on screen)
+  
   client.setServer(mqtt_server, mqtt_port);           
-
+  client.setCallback(Msg_rcv);                   //Send payload to function (Msg_rcv)
+  
   WiFi.begin(WifiName,Password);
   while (WiFi.status() !=WL_CONNECTED){          //If not connected to Wifi, delay until connected
     delay (2000);
@@ -120,10 +129,17 @@ void setup() {
   Serial.println("Connection Started");         //Begin Connection to Wifi
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());               //IP assigned to Server by host wifi
+
+  while(!client.connect("LED_board")){          //LED_board is name of Wemos/arduino connected to code. Waiting to connect to Broker.
+    Serial.println("Finding a Connection...");
+  }
+  client.subscribe("LED");
+  Serial.println("Subscribed to LED");
 }
 
 void loop() {                                // put your main code here, to run repeatedly:
-  
+  client.loop();                             // pre-made function. Connection to MQTT run continuosly (Constantly listening)
+  Turn_color();
 }
 
 
