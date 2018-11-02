@@ -10,29 +10,21 @@ int GREEN = D5;
 int YELLOW = D7;
 int RED = D6;
 
+// ### Sensor Variables sent ### //
+String LED_pwr = "On";
+String LED_color = "Green";
+String LED_final = "Yellow";
+
 // #### MQTT Server connection Setup - Raspberry Pi Broker #### //
-int mqtt_server = 192.168.230.116;
+int mqtt_server = "192.168.230.116";
 int mqtt_port = 1883;  
+
+WiFiClient Wifi;            //Setup Wifi object 
+PubSubClient client(Wifi);  //Object that gives you all the MQTT functionality, access objects in PubSubClient Library
 
 // ##### Wifi Connection Setup #### //
 char WifiName[] = "Verizon-SM-G935V";            //SSID
 char Password[] = "password";
-ESP8266WebServer server(80);                     //Server is on Port 80
-
-
-// #### Web Page Setup #### //
-char WebPage[] = "<html><title><Choose Wisely></title><body><form action=\"/green\"><button>Green</button></form><br><form action=\"/yellow\"><button>Yellow</button></form><br><form action=\"/red\"><button>Red</button></form><br><form action=\"/turnoff\"><button>Clear</button></form><br></body></html>";
-char AutoRespond[] = "text/html";   //header: content type/conent type\ how often refresh
-
-void NoClient(){
-  server.send(404);
-  Serial.println("Reconnecting to server");
-}
-
-void HOME(){                //HomePage
-  server.send(302, AutoRespond, WebPage);
-  Serial.println("Home Page Opened");
-}
 
 // #### LED Functions Setup #### //
 void TurnGREEN(){
@@ -42,7 +34,7 @@ void TurnGREEN(){
   //digitalWrite(YELLOW,LOW);
   //digitalWrite(RED,LOW);
   Serial.println("GREEN");
-  server.send(302, AutoRespond, WebPage);
+  
 }
 
 void Flash(){
@@ -64,29 +56,51 @@ void TurnYELLOW(){
   //TurnOFF();
   AllClear();
   digitalWrite(YELLOW,HIGH);
-  //digitalWrite(GREEN,LOW);
-  //digitalWrite(RED,LOW);
   Serial.println("YELLOW");
-  server.send(302, AutoRespond, WebPage);
 }
 
 void TurnRED(){
   AllClear();
   digitalWrite(RED,HIGH);
   Serial.println("RED");
-  server.send(302, AutoRespond, WebPage);
-}
-
-void TurnOFF(){
-  AllClear();
-  Serial.println("All Clear");
-  server.send(302, AutoRespond, WebPage);
 }
 
 void AllClear(){
   digitalWrite(GREEN,LOW);
   digitalWrite(YELLOW,LOW);
   digitalWrite(RED,LOW);
+}
+
+void Msg_rcv(char* topic, byte* payload, unsigned int length){     //Unsigned int = Positive numbers (more range)
+  if ((char) payload[0] == 'o'){
+    if ((char) payload[1] == 'n'){
+      LED_pwr = "On";
+    }
+    else{
+      LED_pwr = "Off";
+    }
+  }
+  else if ((char) payload[0] == 'g'){
+    LED_color = "Green";
+  }
+  else if ((char) payload[0] == 'y'){
+    LED_color = "Yellow";
+  }
+  else if ((char) payload[0] == 'r'){
+    LED_color = "Red";
+  }
+}
+
+void Turn_color(){
+  if (LED_pwr = "On"){
+    LED_final = LED_color;
+    Serial.print (LED_color);
+    Serial.println (" is on");
+    }
+   else{
+    LED_final = "None";
+    Serial.println ("Power is off");  
+   }
 }
 
 void setup() {
@@ -106,24 +120,10 @@ void setup() {
   Serial.println("Connection Started");         //Begin Connection to Wifi
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());               //IP assigned to Server by host wifi
-
-// #### Activate Functions #### //
-  //If "/ " is seen in the URL, do this function
-  server.on("/green", TurnGREEN);
-  server.on("/yellow", TurnYELLOW);
-  server.on("/red", TurnRED);
-  server.on("/turnoff", TurnOFF);
-  server.on("/", HOME);
-  server.on("/flash", Flash);
-
-  server.onNotFound(NoClient);            //When client not found
-
-  server.begin();
-  Serial.println("Server Ready");
 }
 
 void loop() {                                // put your main code here, to run repeatedly:
-  server.handleClient();                     //Listen for clients (Connections to the webpage)
+  
 }
 
 
