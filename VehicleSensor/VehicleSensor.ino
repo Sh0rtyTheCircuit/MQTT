@@ -1,7 +1,6 @@
 #include <PubSubClient.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
-#include <ESP8266WebServer.h>
 #include <WiFiClient.h>
 
 
@@ -144,9 +143,5 @@ void loop() {                                // put your main code here, to run 
 
 
 /// ## SOURCES ## ///
-//https://techtutorialsx.com/2016/07/17/esp8266-http-get-requests/
-//https://www.instructables.com/id/WiFi-Communication-Between-Two-ESP8266-Based-MCU-T/
-//https://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
-//http://fritzing.org/home/
-//https://www.instructables.com/id/Motion-Detector-With-Blynk-Notifications-WeMos-D1-/
+//https://www.instructables.com/id/How-to-Use-MQTT-With-the-Raspberry-Pi-and-ESP8266/
 //Andrew Thomas, friend, M.S. candidate

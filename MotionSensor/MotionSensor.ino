@@ -1,7 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
 #include <WiFiClient.h>
 #include <PubSubClient.h>
 
@@ -58,11 +57,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  client.loop();
+
+  // ### Activate Sensor ### //
+  
   digitalWrite(Ping,LOW);    //Clear
   delayMicroseconds (2);
   digitalWrite(Ping,HIGH);    //Send out sound
   delayMicroseconds (10);       
   digitalWrite(Ping,LOW);     //Clear again
+
+  // ### Convert time to cm ### //
   
   TimeTravel = pulseIn (Receive,HIGH);       //Get the input of Receive
   distance = (TimeTravel*0.034)/2;          //converts time to cm. If want a more precise reading, do an average of 3 readings.
@@ -89,14 +94,8 @@ void loop() {
       delay (100);
     }
   }
-    Caller.GET();                         //Sends the GET request
-    Caller.end();
 }
 
 /// ## SOURCES ## ///
-//https://techtutorialsx.com/2016/07/17/esp8266-http-get-requests/
-//https://www.instructables.com/id/WiFi-Communication-Between-Two-ESP8266-Based-MCU-T/
-//https://howtomechatronics.com/tutorials/arduino/ultrasonic-sensor-hc-sr04/
-//http://fritzing.org/home/
-//https://www.instructables.com/id/Motion-Detector-With-Blynk-Notifications-WeMos-D1-/
+//https://www.instructables.com/id/How-to-Use-MQTT-With-the-Raspberry-Pi-and-ESP8266/
 //Andrew Thomas, friend, M.S. candidate
