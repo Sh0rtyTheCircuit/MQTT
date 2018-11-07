@@ -48,16 +48,21 @@ void setup() {
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());               //IP assigned to Server by host wifi
 
-  while(!client.connect("LED_board")){          //LED_board is name of Wemos/arduino connected to code. Waiting to connect to Broker.
+  while(!client.connect("Motion_Sensor")){          //LED_board is name of Wemos/arduino connected to code. Waiting to connect to Broker.
     Serial.println("Finding a Connection...");
   }
-  client.subscribe(topic);
+  //client.subscribe(topic);
   Serial.println(topic);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   client.loop();
+
+  if(!client.connected()){
+    client.connect("Motion_Sensor");
+    client.publish(topic, "Reconnected");
+  }
 
   // ### Activate Sensor ### //
   
@@ -90,13 +95,14 @@ void loop() {
     else if (distance < 5){
       Serial.println ("Flash Green and Yellow - Too close");
       client.publish(topic,"green");
-      delay (100);
+      delay (300);
       client.publish(topic,"yellow");
-      delay (100);
-      client.publish(topic,"green");
-      delay (100);
+      delay (300);
+      //client.publish(topic,"green");
+      //delay (100);
     }
   }
+  //delay(500);
 }
 
 /// ## SOURCES ## ///

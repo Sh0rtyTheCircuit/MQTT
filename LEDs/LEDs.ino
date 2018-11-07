@@ -68,23 +68,29 @@ void AllClear(){
 // ### Look through payload (Message Sent) for LED instructions ### //
 
 void Msg_rcv(char* topic, byte* payload, unsigned int length){     //Unsigned int = Positive numbers (more range)
+  Serial.println((char)payload[1]);
   if ((char) payload[0] == 'o'){
     if ((char) payload[1] == 'n'){
       LED_pwr = "On";
     }
     else{
       LED_pwr = "Off";
+      AllClear();
     }
   }
-  else if ((char) payload[0] == 'g'){
-    LED_color = "Green";
+  else if ((char) payload[0] == 'g' && LED_pwr == "On"){
+    //LED_color = "Green";
+    TurnGREEN();
   }
-  else if ((char) payload[0] == 'y'){
-    LED_color = "Yellow";
+  else if ((char) payload[0] == 'y' && LED_pwr == "On"){
+    //LED_color = "Yellow";
+    TurnYELLOW();
   }
-  else if ((char) payload[0] == 'r'){
+  else if ((char) payload[0] == 'r' && LED_pwr == "On"){
     LED_color = "Red";
+    TurnRED();
   }
+  //Turn_color();
 }
 
 // ### Call the functions according to the payload and LED power being on or off ### //
@@ -114,7 +120,7 @@ void setup() {
   pinMode(GREEN,OUTPUT);
   pinMode(YELLOW,OUTPUT);
   pinMode(RED,OUTPUT);
-  Serial.begin(115200);                          //Starts the Serial Monitor (Input printed on screen)
+  Serial.begin(9600);                          //Starts the Serial Monitor (Input printed on screen)
   
   client.setServer(mqtt_server, mqtt_port);           
   client.setCallback(Msg_rcv);                   //Send payload to function (Msg_rcv)
@@ -138,7 +144,10 @@ void setup() {
 
 void loop() {                                // put your main code here, to run repeatedly:
   client.loop();                             // pre-made function. Connection to MQTT run continuosly (Constantly listening)
-  Turn_color();
+  if(!client.connected()){
+    client.connect("LED_board");
+  }
+  //Turn_color();
 }
 
 
